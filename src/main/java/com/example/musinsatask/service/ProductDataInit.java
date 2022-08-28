@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.Map;
 
 public interface ProductDataInit {
-    Map<String, List<ProductVo>> productDataInit();
+    void productDataInit();
 }
