@@ -1,0 +1,34 @@
+[
+  {
+    "category": "top",
+    "brand": "C"
+  },
+  {
+    "category": "outer",
+    "brand": "E"
+  },
+  {
+    "category": "pants",
+    "brand": "D"
+  },
+  {
+    "category": "sneakers",
+    "brand": "G"
+  },
+  {
+    "category": "bag",
+    "brand": "A"
+  },
+  {
+    "category": "cap",
+    "brand": "D"
+  },
+  {
+    "category": "socks",
+    "brand": "I"
+  },
+  {
+    "category": "accessories",
+    "brand": "F"
+  }
+]
