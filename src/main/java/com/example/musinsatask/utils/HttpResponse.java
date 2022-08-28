@@ -17,11 +17,14 @@ public class HttpResponse<T> {
 
   private final T data;
 
+  private final Integer total;
+
   @Builder
-  HttpResponse(HttpStatus status, String message, T data) {
+  HttpResponse(HttpStatus status, String message, T data, Integer total) {
     this.status = status;
     this.message = message;
     this.data = data;
+    this.total = total;
   }
 
   public static <T> HttpResponse<T> toResponse(HttpStatus status, String message) {
@@ -29,6 +32,14 @@ public class HttpResponse<T> {
   }
 
   public static <T> HttpResponse<T> toResponse(HttpStatus status, String message, T data) {
-    return HttpResponse.<T>builder().status(status).message(message).data(data).build();
+    return toResponse(status, message, data, null);
+  }
+
+  public static <T> HttpResponse<T> toResponse(HttpStatus status, String message, Integer total) {
+    return toResponse(status, message, null, total);
+  }
+
+  public static <T> HttpResponse<T> toResponse(HttpStatus status, String message, T data, Integer total) {
+    return HttpResponse.<T>builder().status(status).message(message).data(data).total(total).build();
   }
 }

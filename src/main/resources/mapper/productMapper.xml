@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.musinsatask.mapper.ProductMapper">
+    <select id="productData" resultType="com.example.musinsatask.vo.ProductVo">
+        SELECT a.category,
+               a.price,
+               a.brand
+        FROM tb_products a,
+             tb_brands b
+        WHERE a.brand = b.brand
+          AND a.category = #{category}
+    </select>
+
+    <select id="categoryList" resultType="string">
+        SELECT DISTINCT category
+        FROM tb_products
+    </select>
+</mapper>
