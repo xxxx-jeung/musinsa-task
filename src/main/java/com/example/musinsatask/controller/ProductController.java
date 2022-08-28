@@ -27,23 +27,24 @@ public class ProductController {
   public HttpResponse<List<ProductVo>> lowestPriceItems(
       @RequestBody @Valid @NotNull(message = "카테고리가 존재하지 않습니다.")
           final List<ProductSelectVo> productSelectList) {
-    final var items = productService.findBrandLowestPriceItems(productSelectList);
+    final var foundProductList = productService.findBrandLowestPriceItems(productSelectList);
 
     return HttpResponse.toResponse(
         HttpStatus.OK,
         "브랜드, 카테고리 선택 별 최저가 상품 조회.",
-        items,
-        items.stream().map(ProductVo::getPrice).reduce(0, Integer::sum));
+        foundProductList,
+        foundProductList.stream().map(ProductVo::getPrice).reduce(0, Integer::sum));
   }
 
   @GetMapping("/{brandName}/brand")
   public HttpResponse<List<ProductVo>> lowestPriceBrandItems(
       @PathVariable("brandName") @NotBlank(message = "브랜드가 존재하지 않습니다.") final String brandName) {
-    final var items = productService.findBrandLowestPriceItems(brandName);
-    final var total = items.stream().map(ProductVo::getPrice).reduce(0, Integer::sum);
-    final var message = String.format("%s 브랜드 -> %d 원", brandName, total);
+    final var foundProductList = productService.findBrandLowestPriceItems(brandName);
+    final var totalPrice =
+        foundProductList.stream().map(ProductVo::getPrice).reduce(0, Integer::sum);
+    final var message = String.format("%s 브랜드 -> %d 원", brandName, totalPrice);
 
-    return HttpResponse.toResponse(HttpStatus.OK, message, items, total);
+    return HttpResponse.toResponse(HttpStatus.OK, message, foundProductList, totalPrice);
   }
 
   @GetMapping("/{category}/max-min")
@@ -51,22 +52,22 @@ public class ProductController {
       @PathVariable("category") @NotBlank(message = "브랜드가 존재하지 않습니다.") final String category) {
     final var foundHighestAndLowestPriceProductVo =
         productService.findCategoryHighestAndLowestPriceItems(category);
-    final List<ProductVo> convertSetToList = new ArrayList<>(foundHighestAndLowestPriceProductVo);
+    final var foundConvertSetToList = new ArrayList<>(foundHighestAndLowestPriceProductVo);
     final String message;
-    if (convertSetToList.size() > 1) {
+    if (foundConvertSetToList.size() > 1) {
       message =
           String.format(
               "최소 : %s 브랜드 -> %d 원, 최대 : %s 브랜드 -> %d 원",
-              convertSetToList.get(0).getBrand(),
-              convertSetToList.get(0).getPrice(),
-              convertSetToList.get(1).getBrand(),
-              convertSetToList.get(1).getPrice());
+              foundConvertSetToList.get(0).getBrand(),
+              foundConvertSetToList.get(0).getPrice(),
+              foundConvertSetToList.get(1).getBrand(),
+              foundConvertSetToList.get(1).getPrice());
     } else {
       message =
           String.format(
               "%s 브랜드 -> %d 원",
-              convertSetToList.get(0).getBrand(), convertSetToList.get(0).getPrice());
+              foundConvertSetToList.get(0).getBrand(), foundConvertSetToList.get(0).getPrice());
     }
-    return HttpResponse.toResponse(HttpStatus.OK, message, convertSetToList);
+    return HttpResponse.toResponse(HttpStatus.OK, message, foundConvertSetToList);
   }
 }
