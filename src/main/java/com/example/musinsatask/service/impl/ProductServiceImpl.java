@@ -1,7 +1,7 @@
 package com.example.musinsatask.service.impl;
 
 import com.example.musinsatask.mapper.ProductMapper;
-import com.example.musinsatask.service.ProductDataInit;
+import com.example.musinsatask.redis.RedisService;
 import com.example.musinsatask.service.ProductService;
 import com.example.musinsatask.vo.ProductSelectVo;
 import com.example.musinsatask.vo.ProductVo;
@@ -17,16 +17,16 @@ import static com.example.musinsatask.utils.ProductCategoryFindUtils.*;
 public class ProductServiceImpl implements ProductService {
 
   private final ProductMapper productMapper;
-  private final ProductDataInit productDataInit;
+  private final RedisService redisService;
 
   @Override
   public List<ProductVo> findBrandLowestPriceItems(final List<ProductSelectVo> productVoList) {
-    final Map<String, List<ProductVo>> listMap = productDataInit.productDataInit();
     final var resultProductItems = new ArrayList<ProductVo>();
 
     for (var productSelectVo : productVoList) {
       final ProductVo brandMinItem =
-          findBrandMinItem(listMap.get(productSelectVo.getCategory()), productSelectVo.getBrand());
+          findBrandMinItem(
+              redisService.getValue(productSelectVo.getCategory()), productSelectVo.getBrand());
 
       resultProductItems.add(
           ProductVo.builder()
@@ -41,12 +41,11 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public List<ProductVo> findBrandLowestPriceItems(final String brandName) {
-    final Map<String, List<ProductVo>> listMap = productDataInit.productDataInit();
     final List<String> categoryList = productMapper.categoryList();
     final var resultProductItems = new ArrayList<ProductVo>();
 
     for (String category : categoryList) {
-      final ProductVo brandMinItem = findBrandMinItem(listMap.get(category), brandName);
+      final ProductVo brandMinItem = findBrandMinItem(redisService.getValue(category), brandName);
 
       resultProductItems.add(
           ProductVo.builder()
@@ -61,9 +60,8 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public Set<ProductVo> findCategoryHighestAndLowestPriceItems(final String category) {
-    final Map<String, List<ProductVo>> listMap = productDataInit.productDataInit();
-    final ProductVo categoryMinItem = findCategoryMinItem(listMap.get(category));
-    final ProductVo categoryMaxItem = findCategoryMaxItem(listMap.get(category));
+    final ProductVo categoryMinItem = findCategoryMinItem(redisService.getValue(category));
+    final ProductVo categoryMaxItem = findCategoryMaxItem(redisService.getValue(category));
 
     if (categoryMinItem.getPrice().equals(categoryMaxItem.getPrice())) {
       final List<ProductVo> productShuffleList =
@@ -78,13 +76,11 @@ public class ProductServiceImpl implements ProductService {
 
   @Override
   public ProductVo findCategoryHighestPriceItem(final String category) {
-    final Map<String, List<ProductVo>> listMap = productDataInit.productDataInit();
-    return findCategoryMaxItem(listMap.get(category));
+    return findCategoryMaxItem(redisService.getValue(category));
   }
 
   @Override
   public ProductVo findCategoryLowestPriceItem(final String category) {
-    final Map<String, List<ProductVo>> listMap = productDataInit.productDataInit();
-    return findCategoryMinItem(listMap.get(category));
+    return findCategoryMinItem(redisService.getValue(category));
   }
 }
