@@ -4,11 +4,19 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 @Getter
 @ToString
 public class ProductVo implements Comparable<ProductVo> {
+  @NotBlank(message = "브랜드가 존재하지 않습니다.")
   private String brand;
+
+  @NotBlank(message = "카테고리가 존재하지 않습니다.")
   private String category;
+
+  @NotNull(message = "가격이 존재하지 않습니다.")
   private Integer price;
 
   public ProductVo() {}

@@ -1,11 +1,9 @@
 package com.example.musinsatask.redis;
 
-import com.example.musinsatask.vo.ProductVo;
+public interface RedisService<V> {
+  V getValue(String key);
 
-import java.util.List;
+  void setValue(String key, V data);
 
-public interface RedisService {
-  List<ProductVo> getValue(String key);
-
-  void setValue(String key, List<ProductVo> data);
+  void deleteValue(String key);
 }

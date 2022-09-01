@@ -11,26 +11,34 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public final class RedisServiceImpl implements RedisService {
-  private final RedisTemplate<String, List<ProductVo>> redisTemplate;
+public final class RedisServiceImpl<V> implements RedisService<V> {
+  private final RedisTemplate<String, V> redisTemplate;
 
   @Override
-  public void setValue(String key, List<ProductVo> data) {
+  public void setValue(String key, V data) {
     if (StringUtils.isBlank(key) || data == null) {
       throw new RuntimeException(
           String.format("키와 값이 존재하지 않습니다. - {key: %s, value: %s}", key, data));
     }
 
-    ValueOperations<String, List<ProductVo>> valueOperations = redisTemplate.opsForValue();
+    ValueOperations<String, V> valueOperations = redisTemplate.opsForValue();
     valueOperations.set(key, data);
   }
 
   @Override
-  public List<ProductVo> getValue(String key) {
+  public void deleteValue(String key) {
     if (StringUtils.isBlank(key)) {
       throw new RuntimeException(String.format("키가 존재하지 않습니다. - {key: %s}", key));
     }
-    ValueOperations<String, List<ProductVo>> valueOperations = redisTemplate.opsForValue();
+    redisTemplate.delete(key);
+  }
+
+  @Override
+  public V getValue(String key) {
+    if (StringUtils.isBlank(key)) {
+      throw new RuntimeException(String.format("키가 존재하지 않습니다. - {key: %s}", key));
+    }
+    ValueOperations<String, V> valueOperations = redisTemplate.opsForValue();
     return valueOperations.get(key);
   }
 }
